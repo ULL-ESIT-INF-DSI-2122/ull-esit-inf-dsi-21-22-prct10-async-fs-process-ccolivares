@@ -44,6 +44,7 @@ Procedemos como se nos pide a analizar la traza del programa:
 - Instante 0: Inicialización
 
 | **PILA DE LLAMADAS** 	| **REGISTRO DE EVENTOS** 	| **COLA DE MANEJADORES** 	| **SALIDA POR CONSOLA** 	|
+
 |:--------------------:	|:-----------------------:	|:-----------------------:	|:----------------------:	|
 |           -          	|            -            	|            -            	|            -           	|
 <br>
