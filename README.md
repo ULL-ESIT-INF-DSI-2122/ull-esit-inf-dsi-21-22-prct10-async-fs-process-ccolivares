@@ -43,15 +43,16 @@ Procedemos como se nos pide a analizar la traza del programa:
 
 - Instante 0: Inicialización
 
-| **PILA DE LLAMADAS** 	| **REGISTRO DE EVENTOS** 	| **COLA DE MANEJADORES** 	| **SALIDA POR CONSOLA** 	|
-|·--------------------·	|·-----------------------·	|·-----------------------·	|·----------------------·	|
-|           -          	|            -            	|            -            	|            -           	|
+| PILA DE LLAMADAS | REGISTRO DE LLAMADAS | COLA DE MANEJADORES | SALIDA POR CONSOLA |
+|------------------|----------------------|---------------------|--------------------|
+| -                | -                    | -                   | -                  |
+| -                | -                    | -                   | -                  |
 <br>
 
 - Instante 1: se introduce el proceso `access` y su callback en la pila de llamadas
 
 | **PILA DE LLAMADAS** 	| **REGISTRO DE EVENTOS** 	| **COLA DE MANEJADORES** 	| **SALIDA POR CONSOLA** 	|
-|·--------------------·	|·-----------------------·	|·-----------------------·	|·----------------------·	|
+|:--------------------:	|:-----------------------:	|:-----------------------:	|:----------------------:	|
 |        ACCESS        	|            -            	|            -            	|            -           	|
 |   ACCESS (CALLBACK)  	|            -            	|            -            	|            -           	|
 <br>
