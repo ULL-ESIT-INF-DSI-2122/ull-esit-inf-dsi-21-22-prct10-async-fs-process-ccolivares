@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha",
     "doc": "typedoc",
-    "start": "tsc-watch --onSuccess \"node dist/ejercicio-1/index.js\"",
+    "start": "tsc-watch --onSuccess \"node dist/ejercicio-2/index.js\"",
     "coverage": "nyc npm test && nyc report --reporter=lcov"
   },
   "repository": {
@@ -22,6 +22,7 @@
   "homepage": "https://github.com/ULL-ESIT-INF-DSI-2122/ull-esit-inf-dsi-21-22-prct10-async-fs-process-ccolivares#readme",
   "devDependencies": {
     "@types/chai": "^4.3.1",
+    "@types/chalk": "^2.2.0",
     "@types/mocha": "^9.1.1",
     "@types/node": "^17.0.29",
     "@types/yargs": "^17.0.10",
