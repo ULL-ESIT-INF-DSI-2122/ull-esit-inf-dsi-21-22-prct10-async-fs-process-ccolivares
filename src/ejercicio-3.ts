@@ -1,6 +1,9 @@
 import * as yargs from 'yargs';
 import * as fs from 'fs';
 
+/**
+ * Paquete yargs para línea de comandos
+ */
 yargs.command({
   command: 'watch',
   describe: 'Observa los archivos de un mismo usuario esperando un cambio',
@@ -23,6 +26,11 @@ yargs.command({
 
 yargs.parse();
 
+/**
+ * Función que observa un directorio para avisar de sus cambios
+ * @param path ruta del directorio
+ * @param user usuario al que pertenece
+ */
 function watch(path: string, user: string) {
   fs.readdir(path, (err, prev_content) => {
     if (err) {

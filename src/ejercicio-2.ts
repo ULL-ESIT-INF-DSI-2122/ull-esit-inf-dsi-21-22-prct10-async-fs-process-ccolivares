@@ -2,6 +2,9 @@ import * as yargs from 'yargs';
 import * as fs from 'fs';
 import {spawn} from 'child_process';
 
+/**
+ * Paquete yargs para línea de comandos
+ */
 yargs.command({
   command: 'search',
   describe: 'Buscador de palabras en ficheros',
@@ -37,6 +40,11 @@ yargs.command({
 
 yargs.parse();
 
+/**
+ * Funcion que realiza la búsqueda con el método pipe
+ * @param path ruta del archivo
+ * @param word palabra a buscar
+ */
 function pipe(path: string, word: string) {
   if (fs.existsSync(path)) {
     const cat = spawn('cat', [path]);
@@ -53,6 +61,11 @@ function pipe(path: string, word: string) {
   }
 }
 
+/**
+ * Funcion que realiza la búsqueda sin el método pipe
+ * @param path ruta del archivo
+ * @param word palabra a buscar
+ */
 function noPipe(path: string, word: string) {
   if (fs.existsSync(path)) {
     const cat = spawn('cat', [path]);
