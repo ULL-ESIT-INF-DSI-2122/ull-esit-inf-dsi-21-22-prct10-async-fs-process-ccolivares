@@ -182,6 +182,116 @@ La función `access` de Node.js es un método utilizado para comprobar los permi
 
 [--> Acceso al ejercicio 2 en Github](https://github.com/ULL-ESIT-INF-DSI-2122/ull-esit-inf-dsi-21-22-prct10-async-fs-process-ccolivares/blob/main/src/ejercicio-2.ts)
 
+En este ejercicio se nos pide realizar un programa que devuelva el número de ocurrencias de una palabra en un fichero. Utilizaremos dos estrategias para realizar este programa, la primera será el uso del método `pipe` de un Stream, además del uso de los comandos `cat` y `grep` de Unix/Linux; y la segunda será sin utilizar el metodo `pipe`, simplemente tratando la salida del comando `cat`.
+
+Como se nos pide que los datos necesarios sean pasados al programa desde la linesa de comandos utilizaremos el paquete `yargs`. 
+
+```typescript
+yargs.command({
+  command: 'search',
+  describe: 'Buscador de palabras en ficheros',
+  builder: {
+    path: { 
+      describe: 'Nombre o ruta del fichero',
+      demandOption: true,
+      type: 'string',
+    },
+    word: {
+      describe: 'Palabra a buscar en el fichero',
+      demandOption: true,
+      type: 'string',
+    },
+    pipe: {
+      describe: 'Utilizar o no utilizar pipe',
+      demandOption: false,
+      type: 'boolean',
+    },
+  },
+  handler(argv) {
+    if (typeof argv.path === 'string' && typeof argv.word === 'string') {
+      if (argv.pipe) {
+        pipe(argv.path, argv.word);
+      } else {
+        noPipe(argv.path, argv.word);
+      }
+    } else {
+      console.log("ERROR: No se han especificado los parámetros correctamente");
+    }
+  },
+});
+
+yargs.parse();
+```
+
+Podemos ver como se crean 3 opciones: `path` para la ruta del fichero, `word` como la palabra buscada en dicho fichero y `pipe` como un flag que si está activado utilizaremos el método `pipe` (llamando a la función `pipe()`) y por el contrario no lo utilizaremos (llamando a la función `noPipe()`). 
+
+La funcion `pipe()` recibe en sus parámetros la ruta del fichero y la palabra que se desea buscar.
+
+```typescript
+function pipe(path: string, word: string) {
+  if (fs.existsSync(path)) {
+    const cat = spawn('cat', [path]);
+    const grep = spawn('grep', ['-o', word]);
+  
+    cat.stdout.pipe(grep.stdin);
+
+    grep.stdout.on('data', (data) => {
+      console.log(`Se encontro ${data.toString().split('\n').length - 1} veces la palabra ${word} en el archivo ${path} (método pipe)`);
+    });
+    
+  } else {
+    console.log("ERROR: No se encuentra el archivo especificado");
+  }
+}
+```
+
+Como podemos observar utilizamos el método `spawn()` para crear procesos con los comandos deseados `cat` y `grep`, este último con la opción `-o` que imprime los resultados que coinciden con la expresión que le pasaremos a su lado (en nuestro caso la palabra buscada), es decir, si estuvieramos buscando la palabra "hello" el comando se vería de la siguiente forma: `grep -o hello`
+
+En el repositorio encontramos el archivo `helloworld.txt` con frases aleatorias:
+```
+hello world hello hello
+how are you hello
+```
+
+Al hacer el comando `grep -o hello` la salida quedaría de la siguiente forma:
+```
+hello
+hello
+hello
+hello
+```
+
+Entonces nos será mas facil filtrarlo.
+
+La funcion no pipe
+
+```typescript
+function noPipe(path: string, word: string) {
+  if (fs.existsSync(path)) {
+    const cat = spawn('cat', [path]);
+    let catOutput = '';
+    
+    cat.stdout.on('data', (data) => {
+      catOutput += data;
+    });
+    
+    let aux: number = 0;
+    cat.stdout.on('close', () => {
+      let output_aux: string[] = catOutput.split(/\s/);
+      output_aux.forEach((element) => {
+        if (element == word) {
+          aux++;
+        }
+      });
+
+      console.log(`Se encontro ${aux} veces la palabra ${word} en el archivo ${path} (método no pipe)`);
+    });
+    
+  } else {
+    console.log("ERROR: No se encuentra el archivo especificado");
+  }
+}
+```
 
 ### Ejercicio 3: Controlar cambios realizados en un directorio especificado
 
