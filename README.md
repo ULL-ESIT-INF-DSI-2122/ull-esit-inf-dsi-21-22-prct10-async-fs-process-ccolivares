@@ -7,9 +7,13 @@
 
 ## Introducción
 
+En esta práctica trabajaremos con las API's proporcionadas por Node.js, familiarizandonos con ellas y practicando sus distintos usos, entre ellos interactuar con el sistema de ficheros y crear procesos. 
+
 ## Desarrollo de los ejercicios
 
-### Ejercicio 1
+### Ejercicio 1: Traza de un código asíncrono
+
+[--> Acceso al código de ejemplo en Github](https://github.com/ULL-ESIT-INF-DSI-2122/ull-esit-inf-dsi-21-22-prct10-async-fs-process-ccolivares/blob/main/src/ejercicio-1.ts)
 
 Este ejercicio consiste en analizar un código de Typescript que hace uso del módulo `fs` de `Node.js`. Se nos pide hacer una traza con el estado en cada momento de la pila de llamadas, el registro de eventos de la API, la cola de manejadores y la salida por consola. El código analizado será el siguiente:
 
@@ -48,33 +52,32 @@ Procedemos como se nos pide a analizar la traza del programa:
 |           -          	|            -            	|            -            	|            -           	|
 <br>
 
-- Instante 1: se introduce el proceso `access` y su callback en la pila de llamadas
+- Instante 1: se introduce el proceso `access` a la pila de llamadas
 
 | **PILA DE LLAMADAS** 	| **REGISTRO DE EVENTOS** 	| **COLA DE MANEJADORES** 	| **SALIDA POR CONSOLA** 	|
 |:--------------------:	|:-----------------------:	|:-----------------------:	|:----------------------:	|
 |        ACCESS        	|            -            	|            -            	|            -           	|
-|   ACCESS (CALLBACK)  	|            -            	|            -            	|            -           	|
 <br>
 
 - Instante 2: `access` sale de la pila de llamada y su callback pasa al registro de eventos.
 
 | **PILA DE LLAMADAS** 	| **REGISTRO DE EVENTOS** 	| **COLA DE MANEJADORES** 	| **SALIDA POR CONSOLA** 	|
 |:--------------------:	|:-----------------------:	|:-----------------------:	|:----------------------:	|
-|           -          	|    ACCESS (CALLBACK)    	|            -            	|            -           	|
+|           -          	|          ACCESS          	|            -            	|            -           	|
 <br>
 
 - Instante 3: el callback de `access` pasa a la cola de manejadores.
 
 | **PILA DE LLAMADAS** 	| **REGISTRO DE EVENTOS** 	| **COLA DE MANEJADORES** 	| **SALIDA POR CONSOLA** 	|
 |:--------------------:	|:-----------------------:	|:-----------------------:	|:----------------------:	|
-|           -          	|            -            	|    ACCESS (CALLBACK)    	|            -           	|
+|           -          	|            -            	|        	 ACCESS         	|            -           	|
 <br>
 
 - Instante 4: el callback de `access` pasa a la pila de llamadas y comienza a ejecutarse.
 
 |     **PILA DE LLAMADAS**     	| **REGISTRO DE EVENTOS** 	| **COLA DE MANEJADORES** 	| **SALIDA POR CONSOLA** 	|
 |:----------------------------:	|:-----------------------:	|:-----------------------:	|:----------------------:	|
-| EJECUTANDO ACCESS (CALLBACK) 	|            -            	|            -            	|            -           	|
+|       EJECUTANDO ACCESS     	|            -            	|            -            	|            -           	|
 <br>
 
 - Instante 5: al empezar a ejecutarse si no hay ningun fallo se ejecutará la instruccion  ``console.log(`Starting to watch file ${filename}`)``.
@@ -169,9 +172,21 @@ Procedemos como se nos pide a analizar la traza del programa:
 |                      	|  `watcher.on('change')` 	|            -            	|            -           	|
 <br>
 
-### Ejercicio 2
+Se nos indica en el enunciado que hagamos la traza con minimo dos modificaciones del fichero, esta segunda modificación se realizaría repitiendo los pasos del 13 al 18 (partiendo de que el `watcher.on('change')` esta en el registro de eventos como acaba en el paso 18) y si se quisiera una tercera se repetirían los mismos pasos y así sucesivamente.
 
-### Ejercicio 3
+- ¿Qué hace la función access? ¿Para qué sirve el objeto constants?
 
-### Ejercicio 4
+La función `access` de Node.js es un método utilizado para comprobar los permisos de un archivo o directorio determinado. Los permisos que se van a comprobar pueden ser especificados como un parámetro usando las constantes de acceso a archivos (objeto `constants`) que son las que contienen las constantes mas utilizadas para operaciones de permisos.
+
+### Ejercicio 2: Buscador de palabras en un archivo
+
+[--> Acceso al ejercicio 2 en Github](https://github.com/ULL-ESIT-INF-DSI-2122/ull-esit-inf-dsi-21-22-prct10-async-fs-process-ccolivares/blob/main/src/ejercicio-2.ts)
+
+
+### Ejercicio 3: Controlar cambios realizados en un directorio especificado
+
+[--> Acceso al ejercicio 3 en Github](https://github.com/ULL-ESIT-INF-DSI-2122/ull-esit-inf-dsi-21-22-prct10-async-fs-process-ccolivares/blob/main/src/ejercicio-3.ts)
+
+
+
 

@@ -1,0 +1,4 @@
+eggs
+milk
+almonds
+something to drink
