@@ -177,6 +177,7 @@ Se nos indica en el enunciado que hagamos la traza con minimo dos modificaciones
 - ¿Qué hace la función access? ¿Para qué sirve el objeto constants?
 
 La función `access` de Node.js es un método utilizado para comprobar los permisos de un archivo o directorio determinado. Los permisos que se van a comprobar pueden ser especificados como un parámetro usando las constantes de acceso a archivos (objeto `constants`) que son las que contienen las constantes mas utilizadas para operaciones de permisos.
+<br>
 
 ### Ejercicio 2: Buscador de palabras en un archivo
 
@@ -261,9 +262,9 @@ hello
 hello
 ```
 
-Entonces nos será mas facil filtrarlo.
+Por lo tanto para lograr el objetivo que tenemos en primer lugar vamos a redirigir la salida del comando `cat` al comando `grep`, cuando este detecte que tiene informacion con la que tratar procederemos a procesarla, convirtiendola en una string y aplicandole el método `split` para dividirla (utilizando como separador los espacios) y convertirla en un array al que podemos aplicarle el método `length` y ajustar su resultado.
 
-La funcion no pipe
+Ahora veremos nuestra segunda estrategia sin utilizar el método `pipe`:
 
 ```typescript
 function noPipe(path: string, word: string) {
@@ -293,10 +294,80 @@ function noPipe(path: string, word: string) {
 }
 ```
 
+En este caso solo trabajaremos con el comando `cat`, almacenaremos su salida en una variable auxiliar llamada `catOutput`. Cuando detectamos que el comando se ha terminado de ejecutarse comenzamos a buscar el término que deseamos, procesamos la salida `catOutput` haciendo un split y convirtiendola en un array con cada uno de los elementos (cada palabra, considerando el delimitador el espacio) obtenidos del comando `cat`. Recorreremos este array obtenido y compararemos cada una de sus posiciones con el término deseado, sumando un contador cada vez que tenemos una búsqueda exitosa y obteniendo así el número de ocurrencias.
+<br>
+
 ### Ejercicio 3: Controlar cambios realizados en un directorio especificado
 
 [--> Acceso al ejercicio 3 en Github](https://github.com/ULL-ESIT-INF-DSI-2122/ull-esit-inf-dsi-21-22-prct10-async-fs-process-ccolivares/blob/main/src/ejercicio-3.ts)
 
+Se nos pide desarrollar un programa que reciba desde línea de comandos un nombre de un usuario y observe el directorio donde están almacenadas las notas de ese usuario esperando un cambio y se de información sobre el directorio en tiempo real. 
 
+En primer lugar para la opción de la línea de comandos utilizaremos el paquete `yargs`:
 
+```typescript
+yargs.command({
+  command: 'watch',
+  describe: 'Observa los archivos de un mismo usuario esperando un cambio',
+  builder: {
+    user: {
+      describe: 'Nombre de usuario',
+      demandOption: true,
+      type: 'string',
+    },
+  },
+  handler(argv) {
+    if (typeof argv.user === 'string') {
+      let path: string = './database' + '/' + argv.user;
+      watch(path, argv.user);
+    }
+    else
+      console.log("ERROR: Introducción de datos erronea");
+  },
+});
 
+yargs.parse();
+```
+
+En este caso nuestro comando tiene una única opcion que es el parámetro obligatorio que representa al nombre del usuario (ya que nuestra biblioteca de notas se encuentra en la carpeta `/database` de la raíz y los usuarios son subdirectorios con sus correspondientes notas) y como podemos observar construimos una dirección a partir de ese usuario que se nos proporciona y el directorio `/database` y la almacenamos en una variable para llamar con ella y el nombre del usuario a nuestra función `watch()`.
+
+la funcion `watch()` tiene como objetivo observar los cambios de un directorio:
+
+```typescript
+function watch(path: string, user: string) {
+  fs.readdir(path, (err, prev_content) => {
+    if (err) {
+      console.log('ERROR: No se ha podido leer el directorio');
+
+    } else {
+      console.log("Estoy observando...");
+      fs.watch(path, (eventType, filename) => {
+        console.log(`Ha habido un cambio en el directorio de ${user}`);
+        if (eventType == "rename") {
+          fs.readdir(path, (err, curr_content) => {
+            if (err) {
+              console.log('ERROR: No se ha podido leer el directorio');
+            } else {
+              if (prev_content.length < curr_content.length) {
+                console.log(`Se ha creado el archivo ${filename}`);
+              } else {
+                console.log(`Se ha eliminado el archivo ${filename}`);
+              }
+              prev_content = curr_content;
+            }
+          });
+        }
+        if (eventType == "change") {
+          console.log(`Se ha modificado el archivo ${filename}`);
+        }
+      });
+    }
+  });
+}
+```
+
+Para esta función tendremos en cuenta que debe observar cambios así que nos interesa el tamaño que tiene el directorio antes y despues de detectar un cambio, para poder obtener este dato utilizaremos el método `readdir()` que además nos ayudará a comprobar que se puede leer el directorio. El contenido del directorio se encuentra en la variable `prev_content` que utilizaremos más adelante.
+
+Procedemos a utilizar el método `watch()` para observar los cambios en el directorio. En primer lugar nos interesa el evento `rename` pero este evento no nos informa concretamente de lo que necesitamos saber por lo tanto comprobaremos los tamaños de los contenidos del directorio antes y despues de recibir un evento de cambio. Volvemos a utilizar la función `readdir()` para obtener el tamaño del directorio y lo comparamos con el tamaño que teniamos anteriormente, si es mayor que el anterior significa que se ha creado un nuevo archivo, y en el caso contrario es que se ha eliminado. Y para finalizar actualizamos el contenido previo con el nuevo para futuras modificaciones en la misma ejecución.
+
+Para el caso en el que simplemente se produce un cambio dentro de un archivo del directorio (es decir que el tamaño del directorio no cambia) utilizaremos el evento `change` para detectar modificaciones en archivos. 
