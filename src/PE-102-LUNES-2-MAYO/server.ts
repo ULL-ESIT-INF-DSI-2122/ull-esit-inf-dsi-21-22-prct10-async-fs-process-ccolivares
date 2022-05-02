@@ -5,6 +5,9 @@ if (process.argv.length !== 4) {
   console.log('ERROR. Defina correctamente los parámetros');
 } else {
   
+  /**
+   * Server que procesa comandos y los envia al cliente con sus datos
+   */
   net.createServer((connection) => {
     console.log('Un cliente se ha conectado.');
 

@@ -3,6 +3,9 @@ export {client};
 
 const client = net.connect({port: 60300});
 
+/**
+ * Cliente que recibe y muestra la información proporcionada por el server
+ */
 client.on('data', (dataJSON) => {
   const command_data = JSON.parse(dataJSON.toString());
 
